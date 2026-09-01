@@ -1,0 +1,27 @@
+name: Docs Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: 'docs/**/*.md'
+
+      - name: Check every phase folder has a README
+        run: |
+          for d in docs/*/; do
+            if [ ! -f "${d}README.md" ]; then
+              echo "Missing README.md in $d"
+              exit 1
+            fi
+          done
